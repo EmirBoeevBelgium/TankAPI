@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
-
+app.use(express.json())
 const tanks = [
     {id: 1, name: 'T-14 Armata'},
     {id: 2, name: 'M1-Abrams'},
@@ -26,6 +26,18 @@ app.get('/api/tanks/:id', (req, res) => {
     res.send(tank);
 })
 
+app.post('/api/tanks', (req, res) => {
+    if(!req.body.name || req.body.name.length >= 38) {
+        res.status(400).send('Tank names can\'t be longer than 38 characters.');
+        return;
+    }
+    const tank = {
+        id: tanks.length +1,
+        name: req.body.name
+    }
+    tanks.push(tank);
+    res.send(tank);
+})
 
 
 app.listen(port, () => console.log("Listening on port " + port + "..."));
