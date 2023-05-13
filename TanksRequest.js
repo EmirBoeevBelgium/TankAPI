@@ -2,15 +2,35 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
+const tanks = [
+    {id: 1, name: 'T-14 Armata'},
+    {id: 2, name: 'M1-Abrams'},
+    {id: 3, name: 'Challenger 2'},
+]
+
+
 app.get('/', (req, res) => {
     res.send('Wanna see tanks?');
 });
 
 app.get('/api/tanks', (req, res) => {
-    res.send(['T-34', 'M1-Abrams', 'Challanger 2']);
+    res.send(tanks);
+});
+
+;
+
+app.get('/api/tanks/:id', (req, res) => {
+    const tank = tanks.find(t => t.id === parseInt(req.params.id));
+
+    if(!tank) return res.status(404).send('Tank with the given id doesn\'t exist.');
+    res.send(tank);
 })
 
+
+
 app.listen(port, () => console.log("Listening on port " + port + "..."));
+
+
 
 
 /*const http = require('http');
