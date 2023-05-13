@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
+const Joi = require('joi');
+
 app.use(express.json())
 const tanks = [
     {id: 1, name: 'T-14 Armata'},
@@ -27,8 +29,14 @@ app.get('/api/tanks/:id', (req, res) => {
 })
 
 app.post('/api/tanks', (req, res) => {
-    if(!req.body.name || req.body.name.length >= 38) {
-        res.status(400).send('Tank names can\'t be longer than 38 characters.');
+    const schema = Joi.object({
+        name: Joi.string().max(40).required()
+    });
+    const result = schema.validate(req.body);
+    console.log(result);
+    
+   if(result.error) {
+        res.status(400).send(result.error);
         return;
     }
     const tank = {
