@@ -50,18 +50,18 @@ const Tank = mongoose.model('Tank', tankSchema);
 
 /*async function createTank() {
     const tank = new Tank({
-        name: 'M1 Abrams',
-        origin: 'USA',
-        type: TankType.MBT,
+        name: 'ZSU-23-4 Shilka',
+        origin: 'Soviet Union',
+        type: TankType.SPAA,
         date: {
-            design: 1972,
-            production: 1979
+            design: 1957,
+            production: 1964
         },
-        top_speed_KMH: 72,
+        top_speed_KMH: 50,
         crew: 4,
-        weight_T: 57,
-        max_fuel_L: 1909,
-        main_armament: '120 mm L/44 smoothbore'
+        weight_T: 19,
+        max_fuel_L: 515,
+        main_armament: 'AZP-23 "Amur" quad automatic anti-aircraft gun'
     });
 
     const result = await tank.save();
@@ -73,14 +73,20 @@ const Tank = mongoose.model('Tank', tankSchema);
 createTank();*/
 
 
-async function getTanks() {
+/*async function getTanks() {
     const tanks = await Tank.find();
     console.log(tanks);
 }
 
-getTanks();
+getTanks();*/
 
+async function getTank() {
+    const tank = await Tank
+    .find({type: 'Self-propelled Anti-aircraft'});
+    console.log(tank);
+}
 
+getTank();
 
 
 function validateTank(tank) {
