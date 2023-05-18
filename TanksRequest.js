@@ -6,14 +6,19 @@ const auth = require('./Middleware functions/authentication')
 const log = require('./Middleware functions/logger')
 
 app.use(express.json())
-app.use(log);
-app.use(auth);
+app.use(express.urlencoded({extended: true}));
+app.use(express.static('Public'));
+
+//Test---------
+//app.use(log);
+//app.use(auth);
+//-------------
+
 const tanks = [
     {id: 1, name: 'T-14 Armata'},
     {id: 2, name: 'M1-Abrams'},
     {id: 3, name: 'Challenger 2'},
 ]
-
 
 
 app.get('/', auth, (req, res) => {
@@ -22,10 +27,7 @@ app.get('/', auth, (req, res) => {
 });
 
 
-
-
 app.get('/api/tanks', (req, res) => {
-    console.log("Hello");
     res.send(tanks);
  
 });

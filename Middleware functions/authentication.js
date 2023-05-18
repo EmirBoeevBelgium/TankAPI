@@ -1,4 +1,4 @@
-const auth = (req, res, next) => {
+function auth(req, res, next) {
     if(req.query.admin === 'true') {
         req.admin = true;
         next();
