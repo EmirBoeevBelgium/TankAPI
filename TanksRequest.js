@@ -7,10 +7,14 @@ const config = require('config');
 const morgan = require('morgan');
 console.log('Application name:', config.get('name'));
 console.log('Developer contact:', config.get('mail.host'));
-
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://127.0.0.1/Tanks')
+.then(() =>console.log('Verbonden met mongoDB'))
+.catch(err => console.log('Kan niet verbinden met mongoDB...', err));
 
 const tanks = require('./Routes/tanks');
 const home = require('./Routes/home');
+const TankType = require('./Enum/TankTypes');
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
@@ -21,17 +25,60 @@ app.use('/', home, tanks);
 
 
 
+const tankSchema = new mongoose.Schema({
+    name: String,
+    origin: String,
+    type: {
+        type: String,
+        enum: Object.values(TankType)
+    },
+    date: {
+        design: Date,
+        production: Date
+    },
+    top_speed_KMH: Number,
+    crew: Number,
+    weight_T: Number,
+    max_fuel_L: Number,
+    main_armament: String
+});
+
+
+const Tank = mongoose.model('Tank', tankSchema);
 
 
 
+/*async function createTank() {
+    const tank = new Tank({
+        name: 'M1 Abrams',
+        origin: 'USA',
+        type: TankType.MBT,
+        date: {
+            design: 1972,
+            production: 1979
+        },
+        top_speed_KMH: 72,
+        crew: 4,
+        weight_T: 57,
+        max_fuel_L: 1909,
+        main_armament: '120 mm L/44 smoothbore'
+    });
+
+    const result = await tank.save();
+    console.log(result);
+}
 
 
 
+createTank();*/
 
 
+async function getTanks() {
+    const tanks = await Tank.find();
+    console.log(tanks);
+}
 
-
-
+getTanks();
 
 
 
