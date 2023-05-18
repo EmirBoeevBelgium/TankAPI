@@ -4,6 +4,7 @@ const port = process.env.PORT || 3000;
 const Joi = require('joi');
 
 app.use(express.json())
+app.use(logger);
 const tanks = [
     {id: 1, name: 'T-14 Armata'},
     {id: 2, name: 'M1-Abrams'},
@@ -11,12 +12,25 @@ const tanks = [
 ]
 
 
-app.get('/', (req, res) => {
+
+app.get('/', auth, (req, res) => {
     res.send('Wanna see tanks?');
+    console.log('Wanna see tanks?');
 });
 
+function logger(req, res, next) {
+    console.log('log');
+    next();
+}
+
+function auth(req, res, next) {
+    console.log('auth');
+    next();
+}
 app.get('/api/tanks', (req, res) => {
+    console.log("Hello");
     res.send(tanks);
+ 
 });
 
 ;
@@ -28,6 +42,34 @@ app.get('/api/tanks/:id', (req, res) => {
     res.send(tank);
 })
 
+app.put('/api/tanks/:id', (req, res) => {
+    const tank = tanks.find(t => t.id === parseInt(req.params.id));
+    if(!tank) return res.status(404).send('Tank with the given id doesn\'t exist.');
+    const result = validateTank(req.body);
+    if(result.error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+    tank.name = req.body.name;
+    res.send(tank);
+})
+
+app.delete('/api/tanks/:id', (req, res) => {
+    const tank = tanks.find(t => t.id === parseInt(req.params.id));
+    if(!tank) return res.status(404).send('Tank with the given id doesn\'t exist.');
+    const index = tanks.indexOf(tank);
+    tanks.splice(index, 1);
+    res.send(tank);
+})
+
+function validateTank(tank) {
+    const schema = Joi.object({
+        name: Joi.string().max(40).required()
+    });
+    
+    return schema.validate(tank);
+}
+
 app.post('/api/tanks', (req, res) => {
     const schema = Joi.object({
         name: Joi.string().max(40).required()
@@ -36,7 +78,7 @@ app.post('/api/tanks', (req, res) => {
     console.log(result);
     
    if(result.error) {
-        res.status(400).send(result.error);
+        res.status(400).send(result.error.details[0].message);
         return;
     }
     const tank = {
