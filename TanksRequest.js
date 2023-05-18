@@ -1,65 +1,40 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
-const Joi = require('joi');
-const auth = require('./Middleware functions/authentication')
-const log = require('./Middleware functions/logger')
+
+
+const config = require('config');
+const morgan = require('morgan');
+console.log('Application name:', config.get('name'));
+console.log('Developer contact:', config.get('mail.host'));
+
+
+const tanks = require('./Routes/tanks');
+const home = require('./Routes/home');
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('Public'));
-
-//Test---------
-//app.use(log);
-//app.use(auth);
-//-------------
-
-const tanks = [
-    {id: 1, name: 'T-14 Armata'},
-    {id: 2, name: 'M1-Abrams'},
-    {id: 3, name: 'Challenger 2'},
-]
-
-
-app.get('/', auth, (req, res) => {
-    res.send('Wanna see tanks?');
-    console.log('User is admin =', req.admin);
-});
-
-
-app.get('/api/tanks', (req, res) => {
-    res.send(tanks);
- 
-});
+app.use(morgan('combined'));
+app.use('/', home, tanks);
 
 
 
-app.get('/api/tanks/:id', (req, res) => {
-    const tank = tanks.find(t => t.id === parseInt(req.params.id));
 
-    if(!tank) return res.status(404).send('Tank with the given id doesn\'t exist.');
-    res.send(tank);
-})
 
-app.put('/api/tanks/:id', (req, res) => {
-    const tank = tanks.find(t => t.id === parseInt(req.params.id));
-    if(!tank) return res.status(404).send('Tank with the given id doesn\'t exist.');
-    const result = validateTank(req.body);
-    if(result.error) {
-        res.status(400).send(result.error.details[0].message);
-        return;
-    }
-    tank.name = req.body.name;
-    res.send(tank);
-})
 
-app.delete('/api/tanks/:id', (req, res) => {
-    const tank = tanks.find(t => t.id === parseInt(req.params.id));
-    if(!tank) return res.status(404).send('Tank with the given id doesn\'t exist.');
-    const index = tanks.indexOf(tank);
-    tanks.splice(index, 1);
-    res.send(tank);
-})
+
+
+
+
+
+
+
+
+
+
+
+
 
 function validateTank(tank) {
     const schema = Joi.object({
@@ -69,24 +44,7 @@ function validateTank(tank) {
     return schema.validate(tank);
 }
 
-app.post('/api/tanks', (req, res) => {
-    const schema = Joi.object({
-        name: Joi.string().max(40).required()
-    });
-    const result = schema.validate(req.body);
-    console.log(result);
-    
-   if(result.error) {
-        res.status(400).send(result.error.details[0].message);
-        return;
-    }
-    const tank = {
-        id: tanks.length +1,
-        name: req.body.name
-    }
-    tanks.push(tank);
-    res.send(tank);
-})
+
 
 
 app.listen(port, () => console.log("Listening on port " + port + "..."));
