@@ -2,9 +2,12 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 const Joi = require('joi');
+const auth = require('./Middleware functions/authentication')
+const log = require('./Middleware functions/logger')
 
 app.use(express.json())
-app.use(logger);
+app.use(log);
+app.use(auth);
 const tanks = [
     {id: 1, name: 'T-14 Armata'},
     {id: 2, name: 'M1-Abrams'},
@@ -15,25 +18,19 @@ const tanks = [
 
 app.get('/', auth, (req, res) => {
     res.send('Wanna see tanks?');
-    console.log('Wanna see tanks?');
+    console.log('User is admin =', req.admin);
 });
 
-function logger(req, res, next) {
-    console.log('log');
-    next();
-}
 
-function auth(req, res, next) {
-    console.log('auth');
-    next();
-}
+
+
 app.get('/api/tanks', (req, res) => {
     console.log("Hello");
     res.send(tanks);
  
 });
 
-;
+
 
 app.get('/api/tanks/:id', (req, res) => {
     const tank = tanks.find(t => t.id === parseInt(req.params.id));
