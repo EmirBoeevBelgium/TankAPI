@@ -9,11 +9,11 @@ const Joi = require('joi');
 //app.use(auth);
 //-------------
 
-const tanks = [
+/*const tanks = [
     {id: 1, name: 'T-14 Armata'},
     {id: 2, name: 'M1-Abrams'},
     {id: 3, name: 'Challenger 2'},
-]
+]*/
 
 
 router.get('/api/tanks', (req, res) => {

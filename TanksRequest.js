@@ -29,21 +29,21 @@ app.use('/', home, tanks);
 const Tank = tankModel;
 
 
-/*
-async function createTank(tank) {
-    /*const tank = new Tank({
-        name: 'ZSU-23-4 Shilka',
-        origin: 'Soviet Union',
+
+async function createTank(/*tank*/) {
+    const tank = new Tank({
+        name: 'M1 Abrams',
+        origin: 'USA',
         type: TankType.SPAA,
         date: {
-            design: 1957,
-            production: 1964
+            designYear: 3000,
+            productionYear: 1979
         },
         top_speed_KMH: 50,
         crew: 4,
         weight_T: 19,
         max_fuel_L: 515,
-        main_armament: 'AZP-23 "Amur" quad automatic anti-aircraft gun'
+        main_armament: '120 mm L/44 smoothbore'
     });
 
     const result = await tank.save();
@@ -52,7 +52,7 @@ async function createTank(tank) {
 
 
 
-createTank();*/
+createTank();
 
 
 async function getTanks() {
@@ -60,34 +60,57 @@ async function getTanks() {
     console.log(tanks);
 }
 
-getTanks();
 
 async function getTankByType(tankType) {
+    
     return await Tank
     .find({type: new RegExp(`${tankType}`, 'i')});
     
 }
-/*
+
+async function getTankByName(tankName) {
+    
+    return await Tank
+    .find({name: new RegExp(`${tankName}`, 'i')});
+    
+}
+
 async function updateTank(id) {
     const tank = await Tank.findById(id);
     if(!tank) return;
     tank.set({
-        name: "A tank"
+        designYear: 1972,
+        productionYear: 1979
     })
 
     const result = await tank.save();
     console.log(result);
 }
 
-updateTank('646646535352b46d85c8b59c');*/
+//updateTank('64663d22228a744edea7c60f');
 
-async function run() {
-    const tank = await getTankByType();
+
+async function runGetAllTanks() {
+    const tanks = await getTanks();
+  
+    console.log(tanks);
+}
+
+async function runTankFinderByName() {
+    const tank = await getTankByName();
+  
     console.log(tank);
 }
 
+async function runTankFinderByType() {
+    const tank = await getTankByType();
+  
+    console.log(tank);
+}
 
-run();
+//runGetAllTanks();
+/*runTankFinderByName();
+runTankFinderByType();*/
 
 function validateTank(tank) {
     const schema = Joi.object({
