@@ -1,6 +1,7 @@
 const Tank = require("../Models/TankModel");
 const TankType = require("../Enum/TankTypes");
 const Joi = require('joi');
+const beautifyTankAttr = require('../Functions/tank_attr_beautifier')
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1/Tanks')
 .then(() =>console.log('Verbonden met mongoDB'))
@@ -22,7 +23,7 @@ const newtank = new Tank({
 })
 //=========================================
 
-function beautifyTankAttr(attr) {
+/*function beautifyTankAttr(attr) {
     var beautifiedTankAttr = '';
     const trimmedAttr = attr.trim();
 
@@ -42,7 +43,9 @@ function beautifyTankAttr(attr) {
 
     return beautifiedTankAttr;
 
-}
+}*/
+
+
 
 async function getTankByName(tankName) {
     
@@ -68,7 +71,7 @@ async function validateTank(tank) {
     if(await tankExists(tank)) {
         throw new Error('Tank already exists');
     }
-    
+   
     const improvedTankModel = ({
         name: beautifyTankAttr(tank.name),
         origin: beautifyTankAttr(tank.origin),

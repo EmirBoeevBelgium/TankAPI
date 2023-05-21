@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const TankType = require('../Enum/TankTypes');
-const Joi = require('joi');
+
 
 const tankSchema = new mongoose.Schema({
     name: {type: String, required: true},

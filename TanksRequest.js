@@ -16,6 +16,7 @@ const tanks = require('./Routes/tanks');
 const tankModel = require('./Models/TankModel');
 const home = require('./Routes/home');
 const TankType = require('./Enum/TankTypes');
+const tankValidator = require('./Middleware functions/tank_validator')
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
@@ -45,6 +46,8 @@ async function createTank(/*tank*/) {
         max_fuel_L: 515,
         main_armament: '120 mm L/44 smoothbore'
     });
+
+    tankValidator
 
     const result = await tank.save();
     console.log(result);
