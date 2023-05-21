@@ -81,13 +81,31 @@ createTank();*/
 getTanks();*/
 
 async function getTank() {
-    const tank = await Tank
-    .find({type: 'Self-propelled Anti-aircraft'});
+    return await Tank
+    .find({type: /self-propelled anti-aircraft/i});
+    
+}
+
+async function updateTank(id) {
+    const tank = await Tank.findById(id);
+    if(!tank) return;
+    tank.set({
+        name: "A tank"
+    })
+
+    const result = await tank.save();
+    console.log(result);
+}
+
+updateTank('646646535352b46d85c8b59c');
+
+async function run() {
+    const tank = await getTank();
     console.log(tank);
 }
 
-getTank();
 
+run();
 
 function validateTank(tank) {
     const schema = Joi.object({
