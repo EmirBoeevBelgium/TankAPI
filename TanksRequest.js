@@ -13,6 +13,7 @@ mongoose.connect('mongodb://127.0.0.1/Tanks')
 .catch(err => console.log('Kan niet verbinden met mongoDB...', err));
 
 const tanks = require('./Routes/tanks');
+const tankModel = require('./Models/TankModel');
 const home = require('./Routes/home');
 const TankType = require('./Enum/TankTypes');
 
@@ -25,31 +26,12 @@ app.use('/', home, tanks);
 
 
 
-const tankSchema = new mongoose.Schema({
-    name: String,
-    origin: String,
-    type: {
-        type: String,
-        enum: Object.values(TankType)
-    },
-    date: {
-        design: Date,
-        production: Date
-    },
-    top_speed_KMH: Number,
-    crew: Number,
-    weight_T: Number,
-    max_fuel_L: Number,
-    main_armament: String
-});
+const Tank = tankModel;
 
 
-const Tank = mongoose.model('Tank', tankSchema);
-
-
-
-/*async function createTank() {
-    const tank = new Tank({
+/*
+async function createTank(tank) {
+    /*const tank = new Tank({
         name: 'ZSU-23-4 Shilka',
         origin: 'Soviet Union',
         type: TankType.SPAA,
@@ -73,19 +55,19 @@ const Tank = mongoose.model('Tank', tankSchema);
 createTank();*/
 
 
-/*async function getTanks() {
+async function getTanks() {
     const tanks = await Tank.find();
     console.log(tanks);
 }
 
-getTanks();*/
+getTanks();
 
-async function getTank() {
+async function getTankByType(tankType) {
     return await Tank
-    .find({type: /self-propelled anti-aircraft/i});
+    .find({type: new RegExp(`${tankType}`, 'i')});
     
 }
-
+/*
 async function updateTank(id) {
     const tank = await Tank.findById(id);
     if(!tank) return;
@@ -97,10 +79,10 @@ async function updateTank(id) {
     console.log(result);
 }
 
-updateTank('646646535352b46d85c8b59c');
+updateTank('646646535352b46d85c8b59c');*/
 
 async function run() {
-    const tank = await getTank();
+    const tank = await getTankByType();
     console.log(tank);
 }
 
