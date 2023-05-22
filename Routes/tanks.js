@@ -31,7 +31,6 @@ router.post('/api/tanks', async (req, res) => {
         await tankExists(improvedTankModel);
         const result = tankValidator(improvedTankModel);
         
-        
         const tank = new Tank(result.value);
         await tank.validate()
         tank.save()
