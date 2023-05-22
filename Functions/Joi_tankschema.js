@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const TankType = require('../Enum/TankTypes')
 
 function getTankSchema(improveTankModel) {
     const tankModel = improveTankModel;

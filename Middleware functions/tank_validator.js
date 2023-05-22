@@ -16,6 +16,7 @@ function validateTank(tank) {
         throw new Error(result.error.message);
     }
    
+    console.log(result, 'lol');
  
     return result;
 }

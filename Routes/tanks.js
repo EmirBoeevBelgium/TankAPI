@@ -33,10 +33,17 @@ router.post('/api/tanks', async (req, res) => {
         
         
         const tank = new Tank(result.value);
+        await tank.validate()
         tank.save()
         res.send(tank);
     }
     catch(err) {
+
+        if(err.errors != null) {
+            res.status(400).send(err.message);
+        }
+        
+        console.log(err.errors);
         res.status(400).send(err.message);
     }
       
