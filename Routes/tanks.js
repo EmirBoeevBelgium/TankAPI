@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const beautifyTankAttr = require('../Functions/tank_attr_beautifier')
+
+const tankValidator = require('../Middleware functions/tank_validator')
 const Joi = require('joi');
 const Tank = require('../Models/TankModel');
 
@@ -24,7 +26,9 @@ router.get('/api/tanks', (req, res) => {
 
 router.post('/api/tanks', (req, res) => {
 
-    const improvedTankModel = ({
+    const result = tankValidator(req.body);
+
+    /*const improvedTankModel = ({
         name: beautifyTankAttr(req.body.name),
         origin: beautifyTankAttr(req.body.origin),
         type: req.body.type,
@@ -52,9 +56,11 @@ router.post('/api/tanks', (req, res) => {
         weight_T: Joi.number().max(188).required(),
         max_fuel_L: Joi.number().max(1610).required(),
         main_armament: Joi.string().required()
-    });
+    });*/
+
+
     
-    const result = schema.validate(improvedTankModel);
+    //const result = schema.validate(improvedTankModel);
     console.log(result);
     
    if(result.error) {
