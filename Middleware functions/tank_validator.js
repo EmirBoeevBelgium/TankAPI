@@ -1,7 +1,7 @@
 const Tank = require("../Models/TankModel");
 const TankType = require("../Enum/TankTypes");
 const Joi = require('joi');
-const beautifyTankAttr = require('../Functions/tank_attr_beautifier')
+const getJoiTankSchema = require('../Functions/Joi_tankschema');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1/Tanks')
 .then(() =>console.log('Verbonden met mongoDB'))
@@ -48,53 +48,16 @@ const newtank = new Tank({
 
 
 
-async function getTankByName(tankName) {
-    
-    return await Tank
-    .findOne({name: new RegExp(`${tankName}`, 'i')});
-    
-}
 
-
-
-
-async function tankExists(tank) {
-  
-    const dbContainsTank = await getTankByName(tank.name);
-
-
-    return dbContainsTank != null;
-}
 
 
 async function validateTank(tank) {
-  
-    if(await tankExists(tank)) {
-        throw new Error('Tank already exists');
-    }
-   
-
-    const improvedTankModel = improveTankModel(tank);
-
-    const schema = Joi.object({
-        name: Joi.string().max(40).required(),
-        origin: Joi.string().required(),
-        type: Joi.string().required(),
-        date: {
-            designYear: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
-            productionYear: Joi.number().integer().min(improvedTankModel.date.designYear).max(new Date().getFullYear()).required()
-        },
-        top_speed_KMH: Joi.number().max(80).required(),
-        crew: Joi.number().max(18).required(),
-        weight_T: Joi.number().max(188).required(),
-        max_fuel_L: Joi.number().max(1610).required(),
-        main_armament: Joi.string().required()
-    });
-    
-
-    
+    console.log('Inside validateTank');
+    console.log(tank);
+    const schema = getJoiTankSchema(tank);
+   console.log(schema.validate(tank));
  
-    return schema.validate(improvedTankModel);
+    return schema.validate(tank);
 }
 
 

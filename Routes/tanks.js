@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const beautifyTankAttr = require('../Functions/tank_attr_beautifier')
-
+const tankExists = require('../Functions/tank_checker');
+const improveTankModel = require('../Functions/improve_tankmodel');
 const tankValidator = require('../Middleware functions/tank_validator')
 const Joi = require('joi');
 const Tank = require('../Models/TankModel');
@@ -24,55 +24,24 @@ router.get('/api/tanks', (req, res) => {
     res.send(tanks);
 });
 
-router.post('/api/tanks', (req, res) => {
-
-    const result = tankValidator(req.body);
-
-    /*const improvedTankModel = ({
-        name: beautifyTankAttr(req.body.name),
-        origin: beautifyTankAttr(req.body.origin),
-        type: req.body.type,
-        date: {
-            designYear: req.body.date.designYear,
-            productionYear: req.body.date.productionYear
-        },
-        top_speed_KMH: req.body.top_speed_KMH,
-        crew: req.body.crew,
-        weight_T: req.body.weight_T,
-        max_fuel_L: req.body.max_fuel_L,
-        main_armament: req.body.main_armament
-    })
-
-    const schema = Joi.object({
-        name: Joi.string().max(40).required(),
-        origin: Joi.string().required(),
-        type: Joi.string().required(),
-        date: {
-            designYear: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
-            productionYear: Joi.number().integer().min(improvedTankModel.date.designYear).max(new Date().getFullYear()).required()
-        },
-        top_speed_KMH: Joi.number().max(80).required(),
-        crew: Joi.number().max(18).required(),
-        weight_T: Joi.number().max(188).required(),
-        max_fuel_L: Joi.number().max(1610).required(),
-        main_armament: Joi.string().required()
-    });*/
+router.post('/api/tanks', async (req, res) => {
+    const improvedTankModel = improveTankModel(req.body);
 
 
-    
-    //const result = schema.validate(improvedTankModel);
-    console.log(result);
-    
-   if(result.error) {
-        res.status(400).send(result.error.details[0].message);
-        return;
-    }
-    const tank = new Tank({improvedTankModel});
-    const p = new Promise((resolve, reject) => {
+    try {
+        console.log("Inside try block");
+        await tankExists(improvedTankModel);
+        const result = await tankValidator(improvedTankModel);
         
-    })
-    tank.save()
-    res.send(tank);
+        
+        const tank = new Tank(result.value);
+        tank.save()
+        res.send(tank);
+    }
+    catch(err) {
+        res.status(400).send(err.message);
+    }
+      
 })
 
 router.get('/api/tanks/:id', (req, res) => {
