@@ -13,11 +13,6 @@ const Tank = require('../Models/TankModel');
 //app.use(auth);
 //-------------
 
-/*const tanks = [
-    {id: 1, name: 'T-14 Armata'},
-    {id: 2, name: 'M1-Abrams'},
-    {id: 3, name: 'Challenger 2'},
-]*/
 
 
 router.get('/api/tanks', (req, res) => {
@@ -29,9 +24,8 @@ router.post('/api/tanks', async (req, res) => {
 
 
     try {
-        console.log("Inside try block");
         await tankExists(improvedTankModel);
-        const result = await tankValidator(improvedTankModel);
+        const result = tankValidator(improvedTankModel);
         
         
         const tank = new Tank(result.value);
